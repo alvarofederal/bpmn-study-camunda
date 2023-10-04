@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1eig59b" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
+  <bpmn:message id="Message_0p2e1fn" name="send-message-start" />
+  <bpmn:message id="Message_176wajx" />
+  <bpmn:message id="Message_1r07da7" name="send-message-2" />
+  <bpmn:message id="Message_0jx7hv9" name="send-message-event" />
+  <bpmn:process id="prcss-using-message" name="Processo teste para uso de message" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_0gtvsi8" />
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_1bas0w6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_15bocj8" name="Envia mensagem">
+      <bpmn:incoming>SequenceFlow_10pgjzq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0px86id</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0p2e1fn" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:userTask id="Task_118bsq0" name="Entrada de dados">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="nome" label="Nome cliente" type="string" />
+          <camunda:formField id="documento" label="Documento" type="string" />
+          <camunda:formField id="texto_envio" label="Texto para envio" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1bas0w6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_10pgjzq</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0agb49b</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_1p5tc37">
+      <bpmn:incoming>SequenceFlow_153fqtz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Task_0kea3we" name="Apresentar dados enviados">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="nome" label="Nome cliente" type="string" />
+          <camunda:formField id="documento" label="Documento" type="string" />
+          <camunda:formField id="texto_envio" label="Texto envio" type="string" />
+          <camunda:formField id="resultUsingMessage" label="Retorno do envio" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0px86id</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_153fqtz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_0w11efn">
+      <bpmn:incoming>SequenceFlow_1l33kse</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Task_1k392j0" name="mostra dado" scriptFormat="JavaScript" camunda:resultVariable="resultUsingMessage">
+      <bpmn:incoming>SequenceFlow_01ol279</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1l33kse</bpmn:outgoing>
+      <bpmn:script>var system = java.lang.System;
+var nome = execution.getVariable("nome");
+system.out.println("#### USING MESSAGEM SCRIPT" );
+system.out.println("##### nome: " + nome);
+
+execution.setVariable("envio_texto", nome);
+
+var retorno = "funcionou";</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:subProcess id="Task_11nzyse">
+      <bpmn:startEvent id="StartEvent_124hfxb">
+        <bpmn:outgoing>SequenceFlow_1v3fvgr</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1v3fvgr" sourceRef="StartEvent_124hfxb" targetRef="Task_0soo7e8" />
+      <bpmn:endEvent id="EndEvent_14v83tv">
+        <bpmn:incoming>SequenceFlow_18ydqaf</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_18ydqaf" sourceRef="Task_0soo7e8" targetRef="EndEvent_14v83tv" />
+      <bpmn:scriptTask id="Task_0soo7e8" name="mostra dado para envio" scriptFormat="JavaScript">
+        <bpmn:incoming>SequenceFlow_1v3fvgr</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_18ydqaf</bpmn:outgoing>
+        <bpmn:script>var system = java.lang.System;
+var nome = execution.getVariable("nome");
+system.out.println("#### USING MESSAGEM SCRIPT" );
+system.out.println("##### nome: " + nome);
+
+execution.setVariable("envio_texto_subprcss", nome);
+
+var retorno = "funcionou-sub-processo";</bpmn:script>
+      </bpmn:scriptTask>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SequenceFlow_1bas0w6" sourceRef="StartEvent_1" targetRef="Task_118bsq0" />
+    <bpmn:sequenceFlow id="SequenceFlow_10pgjzq" sourceRef="Task_118bsq0" targetRef="IntermediateThrowEvent_15bocj8" />
+    <bpmn:sequenceFlow id="SequenceFlow_0px86id" sourceRef="IntermediateThrowEvent_15bocj8" targetRef="Task_0kea3we" />
+    <bpmn:sequenceFlow id="SequenceFlow_153fqtz" sourceRef="Task_0kea3we" targetRef="EndEvent_1p5tc37" />
+    <bpmn:sequenceFlow id="SequenceFlow_01ol279" sourceRef="IntermediateThrowEvent_1euciks" targetRef="Task_1k392j0" />
+    <bpmn:sequenceFlow id="SequenceFlow_1l33kse" sourceRef="Task_1k392j0" targetRef="EndEvent_0w11efn" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_1euciks">
+      <bpmn:outgoing>SequenceFlow_01ol279</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0gycao4" messageRef="Message_0jx7hv9" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:boundaryEvent id="BoundaryEvent_1glges6" name="dispara envio" camunda:asyncBefore="true" attachedToRef="Task_11nzyse">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">var system = java.lang.System;
+var nome = execution.getVariable("nome"):
+system.out.println("#### USING MESSAGEM EVENT RECEIV SUB-PROCESS" );
+system.out.println("##### evento de inicio");</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">var system = java.lang.System;
+var nome = execution.getVariable("nome"):
+system.out.println("#### USING MESSAGEM EVENT RECEIV SUB-PROCESS" );
+system.out.println("##### evento de saida");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:messageEventDefinition messageRef="Message_1r07da7" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_18vc60s" sourceRef="BoundaryEvent_03p772i" targetRef="IntermediateThrowEvent_0mui0q3" />
+    <bpmn:endEvent id="IntermediateThrowEvent_0mui0q3" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">var system = java.lang.System;
+var nome = execution.getVariable("nome");
+system.out.println("#### USING MESSAGEM SEND EVENT" );
+system.out.println("##### nome: " + nome);
+
+execution.setVariable("envio_mssgSend", nome);
+</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_18vc60s</bpmn:incoming>
+      <bpmn:messageEventDefinition messageRef="Message_0jx7hv9" />
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="BoundaryEvent_03p772i" attachedToRef="Task_118bsq0">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">var system = java.lang.System;
+var nome = execution.getVariable("nome");
+system.out.println("#### USING MESSAGEM EVENT ENTRADA" );
+system.out.println("##### evento de inicio");</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">var system = java.lang.System;
+var nome = execution.getVariable("nome");
+system.out.println("#### USING MESSAGEM EVENT ENTRADA" );
+system.out.println("##### evento de saida");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_18vc60s</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1lx63qk" messageRef="Message_0p2e1fn" />
+    </bpmn:boundaryEvent>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0hkmd10">
+      <bpmn:incoming>SequenceFlow_0agb49b</bpmn:incoming>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0agb49b" sourceRef="Task_118bsq0" targetRef="IntermediateThrowEvent_0hkmd10" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="prcss-using-message">
+      <bpmndi:BPMNShape id="StartEvent_124hfxb_di" bpmnElement="StartEvent_124hfxb">
+        <dc:Bounds x="680" y="412" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1v3fvgr_di" bpmnElement="SequenceFlow_1v3fvgr">
+        <di:waypoint x="716" y="430" />
+        <di:waypoint x="775" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_14v83tv_di" bpmnElement="EndEvent_14v83tv">
+        <dc:Bounds x="937" y="412" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18ydqaf_di" bpmnElement="SequenceFlow_18ydqaf">
+        <di:waypoint x="875" y="430" />
+        <di:waypoint x="937" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1if4def_di" bpmnElement="Task_0soo7e8">
+        <dc:Bounds x="775" y="390" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bas0w6_di" bpmnElement="SequenceFlow_1bas0w6">
+        <di:waypoint x="215" y="121" />
+        <di:waypoint x="270" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_10pgjzq_di" bpmnElement="SequenceFlow_10pgjzq">
+        <di:waypoint x="370" y="121" />
+        <di:waypoint x="462" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0px86id_di" bpmnElement="SequenceFlow_0px86id">
+        <di:waypoint x="498" y="121" />
+        <di:waypoint x="590" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_153fqtz_di" bpmnElement="SequenceFlow_153fqtz">
+        <di:waypoint x="690" y="121" />
+        <di:waypoint x="782" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_01ol279_di" bpmnElement="SequenceFlow_01ol279">
+        <di:waypoint x="238" y="524" />
+        <di:waypoint x="290" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1l33kse_di" bpmnElement="SequenceFlow_1l33kse">
+        <di:waypoint x="390" y="524" />
+        <di:waypoint x="442" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="103" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0rr4mwq_di" bpmnElement="IntermediateThrowEvent_15bocj8">
+        <dc:Bounds x="462" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="438" y="146" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_194wsmk_di" bpmnElement="Task_118bsq0">
+        <dc:Bounds x="270" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1p5tc37_di" bpmnElement="EndEvent_1p5tc37">
+        <dc:Bounds x="782" y="103" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0vbhcsl_di" bpmnElement="Task_0kea3we">
+        <dc:Bounds x="590" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0w11efn_di" bpmnElement="EndEvent_0w11efn">
+        <dc:Bounds x="442" y="506" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_00nlu78_di" bpmnElement="Task_1k392j0">
+        <dc:Bounds x="290" y="484" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_0p9sze4_di" bpmnElement="Task_11nzyse" isExpanded="true">
+        <dc:Bounds x="640" y="330" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_06yd9tc_di" bpmnElement="IntermediateThrowEvent_1euciks">
+        <dc:Bounds x="202" y="506" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_1p6ciur_di" bpmnElement="BoundaryEvent_1glges6">
+        <dc:Bounds x="622" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="544" y="403" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18vc60s_di" bpmnElement="SequenceFlow_18vc60s">
+        <di:waypoint x="310" y="179" />
+        <di:waypoint x="310" y="250" />
+        <di:waypoint x="342" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_15nscvj_di" bpmnElement="IntermediateThrowEvent_0mui0q3">
+        <dc:Bounds x="342" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_1ximhcp_di" bpmnElement="BoundaryEvent_03p772i">
+        <dc:Bounds x="292" y="143" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0hkmd10_di" bpmnElement="IntermediateThrowEvent_0hkmd10">
+        <dc:Bounds x="462" y="222" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0agb49b_di" bpmnElement="SequenceFlow_0agb49b">
+        <di:waypoint x="370" y="121" />
+        <di:waypoint x="420" y="121" />
+        <di:waypoint x="420" y="240" />
+        <di:waypoint x="462" y="240" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
